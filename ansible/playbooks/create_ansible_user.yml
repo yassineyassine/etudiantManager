@@ -1,0 +1,43 @@
+- name: Create a new user
+  hosts: all
+
+  tasks:
+  - name: Create ~/.ssh directory if none exists
+    file:
+      path: "/home/{{ ansible_user }}/.ssh"
+      state: directory
+      mode: "0700"
+    run_once: yes
+    delegate_to: localhost
+
+  - name: Generate SSH key
+    community.crypto.openssh_keypair:
+      path: "/home/{{ansible_user}}/.ssh/id_rsa"
+      type: rsa
+      size: 4096
+      state: present
+      force: no
+    run_once: yes
+    delegate_to: localhost
+
+  - name: Create a new user
+    user:
+      name: "{{ ansible_user }}"
+      shell: /bin/bash
+      groups: "{{ ansible_user_group }}"
+      append: yes
+      password: "{{ ansible_user_pass | password_hash('sha512') }}"
+    become: yes
+
+  - name: Add user to the sudoers
+    copy:
+      dest: "/etc/sudoers.d/{{ ansible_user }}"
+      content: "{{ ansible_user }}  ALL=(ALL)  NOPASSWD: ALL"
+    become: yes
+
+  - name: Deploy SSH Key
+    authorized_key: 
+      user: "{{ ansible_user }}"
+      key: "{{ lookup('file', '/home/{{ansible_user}}/.ssh/id_rsa.pub') }}"
+      state: present
+    become: yes

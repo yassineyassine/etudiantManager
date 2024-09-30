@@ -1,0 +1,20 @@
+- name: Configure Docker daemon.json for insecure registries
+  hosts: all
+  become: true
+  tasks:
+    - name: Create daemon.json
+      template:
+        src: templates/daemon.json.j2
+        dest: /etc/docker/daemon.json
+      notify: Restart Docker Service
+
+    - name: add domaine to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "192.168.0.5 prod.local"
+
+  handlers:
+    - name: Restart Docker Service
+      systemd:
+        name: docker
+        state: restarted

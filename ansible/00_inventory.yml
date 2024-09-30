@@ -1,0 +1,18 @@
+all:
+  children:
+    production:
+      hosts:
+        prodserver:
+          ansible_host: 192.168.0.7
+          ansible_user: root
+          ansible_ssh_pass: yassine
+      vars:
+        var1: "var1 from inventory"
+    staging:
+      hosts:
+        testserver:
+          ansible_host: 192.168.0.6
+          ansible_user: root
+          ansible_ssh_pass: yassine
+      vars:
+        var1: "var1 from inventory"

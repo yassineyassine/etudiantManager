@@ -1,0 +1,33 @@
+- name: deploy app
+  hosts: all
+  
+  tasks:
+    - name: Stop and remove existing container
+      docker_container:
+        name: "{{ docker_container_name }}"
+        state: absent
+      ignore_errors: yes  # Ignore if the container does not exist
+
+    - name: Prune unused Docker images
+      command: docker image prune -f
+
+    - name: Log in to Nexus registry
+      docker_login:
+        registry_url: "{{ nexus_registry_url }}"
+        username: "{{ nexus_registry_username }}"
+        password: "{{ nexus_registry_password }}"
+        reauthorize: yes
+
+    - name: Pull the image from Nexus registry
+      docker_image:
+        name: "{{ nexus_registry_url }}/{{ docker_image_name }}"
+        source: pull
+        tag: "{{ docker_image_tag }}"
+
+    - name: Start the new container
+      docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ nexus_registry_url }}/{{ docker_image_name }}:{{ docker_image_tag }}"
+        ports:
+          - "{{ docker_container_port }}:8084"
+        state: started

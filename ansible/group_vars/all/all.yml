@@ -1,0 +1,12 @@
+ansible_user: "user-ansible"
+ansible_user_group: "wheel"
+ansible_user_pass: "{{ vault_ansible_user_pass }}"
+
+nexus_registry_username: "{{ vault_nexus_registry_username }}"
+nexus_registry_password: "{{ vault_nexus_registry_password }}"
+nexus_registry_url: "prod.local:5003"
+
+docker_image_name: "devops-project-samples"
+docker_image_tag: "latest"
+docker_container_name: "springbootapp"
+docker_container_port: "8084"
