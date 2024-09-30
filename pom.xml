@@ -33,7 +33,7 @@
     	<sonar.projectName>devops</sonar.projectName>
     	<sonar.host.url>http://prod.local:9000</sonar.host.url>
     	<sonar.token>sqp_49928bdba9bb592da5cfec661a8adb4e25172fc4</sonar.token>
-	</properties>
+
     </properties>
     <dependencies>
         <dependency>
